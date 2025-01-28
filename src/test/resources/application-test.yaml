@@ -1,0 +1,30 @@
+server:
+  port: ${SERVER_PORT_TEST}
+
+spring:
+  application:
+    name: ${APPLICATION_NAME_TEST}
+
+  data:
+    redis:
+      host: ${REDIS_HOST_TEST}
+      port: ${REDIS_PORT_TEST}
+      password: ${REDIS_PASSWORD_TEST}
+      ssl:
+        enabled: false
+
+  datasource:
+    url: ${PG_URL_TEST}
+    username: ${PG_USERNAME_TEST}
+    password: ${PG_PASSWORD_TEST}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  liquibase:
+    change-log: ${CHANGELOG_LIQUIBASE_TEST}
+
+prefix:
+  key:
+    limit: "limit:"
+    sum: "sum:"

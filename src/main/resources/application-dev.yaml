@@ -1,0 +1,27 @@
+server:
+  port: ${SERVER_PORT_DEV}
+
+spring:
+  application:
+    name: ${APPLICATION_NAME_DEV}
+
+  data:
+    redis:
+      host: ${REDIS_HOST_DEV}
+      port: ${REDIS_PORT_DEV}
+      password: ${REDIS_PASSWORD_DEV}
+      ssl:
+        enabled: false
+
+  datasource:
+    url: ${PG_URL_DEV}
+    username: ${PG_USERNAME_DEV}
+    password: ${PG_PASSWORD_DEV}
+
+  liquibase:
+    change-log: ${CHANGELOG_LIQUIBASE_DEV}
+
+prefix:
+  key:
+    limit: "limit:"
+    sum: "sum:"

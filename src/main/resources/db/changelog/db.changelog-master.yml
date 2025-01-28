@@ -1,0 +1,67 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_exchange_rate_table
+      author: Vishenia
+      changes:
+        - sqlFile:
+            path: db/changelog/01_create_exchange_rate_table.sql
+      rollback:
+        - sql:
+            sql: "DROP TABLE IF EXISTS exchange_rate;"
+
+  - changeSet:
+      id: create_expense_transaction_table
+      author: Vishenia
+      changes:
+        - sqlFile:
+            path: db/changelog/02_create_expense_transaction_table.sql
+      rollback:
+        - sql:
+            sql: |
+             DROP TABLE IF EXISTS expense_transaction;
+
+  - changeSet:
+      id: create_transaction_limit_table
+      author: Vishenia
+      changes:
+        - sqlFile:
+            path: db/changelog/03_create_transaction_limit_table.sql
+      rollback:
+        - sql:
+            sql: |
+             DROP TABLE IF EXISTS transaction_limit;
+
+  - changeSet:
+      id: create_set_default_limit_trigger
+      author: Vishenia
+      changes:
+        - sqlFile:
+            path: db/changelog/04_create_set_limit_trigger.sql
+            endDelimiter: '$$'
+      rollback:
+        - sql:
+            sql: |
+              DROP TRIGGER IF EXISTS check_transaction_limits ON transaction_limit;
+              DROP FUNCTION IF EXISTS set_default_limit_value;
+
+  - changeSet:
+      id: create_check_limit_limit_trigger
+      author: Vishenia
+      changes:
+        - sqlFile:
+            path: db/changelog/07_create_check_limit_trigger.sql
+      rollback:
+        - sql:
+            sql: |
+              DROP TRIGGER IF EXISTS check_transaction_limits ON transaction_limit;
+
+  - changeSet:
+      id: insert_default_values_in_transaction_limit
+      author: Vishenia
+      changes:
+        - sqlFile:
+            path: db/changelog/08_insert_default_categories_in_limit_table.sql
+      rollback:
+        - sql:
+            sql: |
+              DELETE FROM transaction_limit;

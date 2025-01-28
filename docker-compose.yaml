@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  app:
+    image: operation-service-image:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: operation-service
+    depends_on:
+      - redis
+      - postgres
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: ${PG_URL_PROD}
+      SPRING_DATASOURCE_USERNAME: ${PG_USERNAME_PROD}
+      SPRING_DATASOURCE_PASSWORD: ${PG_PASSWORD_PROD}
+      SPRING_CACHE_TYPE: redis
+      SPRING_REDIS_PORT: ${REDIS_PORT_PROD}
+    networks:
+      - app-network
+
+  postgres:
+    image:  postgres:16.3-alpine
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: ${PG_USERNAME_PROD}
+      POSTGRES_PASSWORD: ${PG_PASSWORD_PROD}
+      POSTGRES_DB: operations
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD_PROD}
+      - REDIS_USER=${REDIS_USER_PROD}
+      - REDIS_USER_PASSWORD=${REDIS_USER_PASSWORD_PROD}
+    networks:
+      - app-network
+    volumes:
+      - redis_data:/data
+    command: >
+      sh -c '
+        mkdir -p /usr/local/etc/redis &&
+        echo "bind 0.0.0.0" > /usr/local/etc/redis/redis.conf &&
+        echo "requirepass $REDIS_PASSWORD_PROD" >> /usr/local/etc/redis/redis.conf &&
+        echo "appendonly yes" >> /usr/local/etc/redis/redis.conf &&
+        echo "appendfsync everysec" >> /usr/local/etc/redis/redis.conf &&
+        echo "user default on >$REDIS_PASSWORD_PROD ~* +@all" >> /usr/local/etc/redis/users.acl &&
+        echo "user $REDIS_USER on >$REDIS_USER_PASSWORD_PROD ~* +@all" >> /usr/local/etc/redis/users.acl &&
+        redis-server /usr/local/etc/redis/redis.conf --aclfile /usr/local/etc/redis/users.acl
+      '
+
+volumes:
+  pg-data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
