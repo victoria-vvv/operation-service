@@ -27,7 +27,7 @@
 
 1. **Клонируйте репозиторий:**
     ```bash
-    git clone https://github.com/your-repo/operation-service.git
+    git clone https://github.com/victoria-vvv/operation-service.git
     cd operation-service
     ```
 
